@@ -1,3 +1,5 @@
+mod statistic;
+
 use std::fmt::Debug;
 use rand::prelude::*;
 use rand::seq::index::sample;
