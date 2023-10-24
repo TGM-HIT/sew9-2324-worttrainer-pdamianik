@@ -1,3 +1,5 @@
+mod statistic;
+
 use std::borrow::Cow;
 use std::fmt::{Debug, Formatter};
 use pharos::*;
