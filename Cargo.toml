@@ -6,8 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+pharos = "0.5.3"
 rand = "0.8.5"
 url = { version = "2.4.1"}
+tokio = { version = "1.33.0", features = ["rt-multi-thread", "macros"] }
+futures = "0.3.28"
 
 [dev-dependencies]
 lazy_static = "1.4.0"
