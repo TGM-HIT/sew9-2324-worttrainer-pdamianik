@@ -63,12 +63,6 @@ mod imp {
 
             self.obj().present_window();
         }
-
-        fn startup(&self) {
-            self.parent_startup();
-
-            println!("startup");
-        }
     }
     impl GtkApplicationImpl for Application {}
 
