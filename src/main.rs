@@ -1,6 +1,6 @@
-use adw::{Application, gio};
 use adw::glib::ExitCode;
 use adw::prelude::*;
+use adw::{gio, Application};
 
 mod model;
 mod observer;
@@ -10,7 +10,8 @@ use view::build_ui;
 
 const APP_ID: &str = "at.ac.tgm.pdamianik.spelling_trainer";
 
-fn main() -> ExitCode {
+#[tokio::main]
+async fn main() -> ExitCode {
     gio::resources_register_include!("spelling_trainer.gresource")
         .expect("failed to register resources.");
 

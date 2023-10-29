@@ -12,6 +12,8 @@ tokio = { version = "1.33.0", features = ["rt-multi-thread", "macros"] }
 futures = "0.3.28"
 gtk = { version = "0.7.3", package = "gtk4", features = ["v4_12", "gnome_45"] }
 adw = { version = "0.5.3", package = "libadwaita", features = ["v1_4"] }
+reqwest = { version = "0.11.22", features = ["stream"] }
+thiserror = "1.0.50"
 
 [dev-dependencies]
 lazy_static = "1.4.0"
