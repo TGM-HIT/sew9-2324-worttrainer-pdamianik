@@ -1,21 +1,17 @@
-use std::cell::RefCell;
-use std::rc::Rc;
 use adw::gio::SimpleAction;
-use crate::view::web_image::load_image;
 use adw::glib::{self, clone, MainContext};
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{Button, CompositeTemplate, Entry, Image, Spinner};
+use gtk::{Button, CenterBox, CompositeTemplate, Entry};
 use gtk::prelude::*;
+use crate::view::web_image::WebImage;
 use crate::view::word_list;
 
 #[derive(CompositeTemplate, Default)]
 #[template(resource = "/at/ac/tgm/pdamianik/spelling_trainer/main.ui")]
 pub struct Window {
     #[template_child]
-    pub image: TemplateChild<Image>,
-    #[template_child]
-    pub spinner: TemplateChild<Spinner>,
+    pub image_view: TemplateChild<CenterBox>,
     #[template_child]
     pub guess_entry: TemplateChild<Entry>,
     #[template_child]
@@ -42,15 +38,12 @@ impl ObjectImpl for Window {
         let obj = self.obj();
         self.parent_constructed();
 
-        let main_context = MainContext::default();
-        main_context.spawn_local(clone!(@strong self.image as image, @strong self.spinner as spinner => async move {
-            let image_data = load_image("https://source.unsplash.com/random").await
-                .expect("Failed loading image data");
-            image.set_from_paintable(image_data.as_ref());
-            spinner.set_visible(false);
-            image.set_visible(true);
+        let web_image = WebImage::new();
+        let context = MainContext::default();
+        context.spawn_local(clone!(@strong web_image => async move {
+            web_image.load("https://source.unsplash.com/random").await.unwrap();
         }));
-
+        self.image_view.set_center_widget(Some(&web_image));
         let action_check = SimpleAction::new("check", None);
 
         action_check.connect_activate(clone!(@strong self.guess_entry as entry, @strong self.check_button as button => move |_, _| {

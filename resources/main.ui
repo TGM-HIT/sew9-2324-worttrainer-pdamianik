@@ -19,31 +19,12 @@
                     <object class="GtkBox">
                         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
                         <child>
-                            <object class="GtkCenterBox">
+                            <object class="GtkCenterBox" id="image_view">
                                 <property name="hexpand">true</property>
                                 <property name="vexpand">true</property>
                                 <property name="height-request">300</property>
                                 <property name="width-request">300</property>
                                 <child type="center">
-                                    <object class="GtkBox">
-                                        <child>
-                                            <object class="GtkImage" id="image">
-                                                <property name="hexpand">true</property>
-                                                <property name="vexpand">true</property>
-                                                <property name="height-request">300</property>
-                                                <property name="width-request">300</property>
-                                                <property name="visible">false</property>
-                                            </object>
-                                        </child>
-                                        <child>
-                                            <object class="GtkSpinner" id="spinner">
-                                                <property name="height-request">30</property>
-                                                <property name="width-request">30</property>
-                                                <property name="visible">true</property>
-                                                <property name="spinning">true</property>
-                                            </object>
-                                        </child>
-                                    </object>
                                 </child>
                             </object>
                         </child>
