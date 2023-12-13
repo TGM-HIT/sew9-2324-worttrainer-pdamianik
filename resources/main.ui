@@ -6,7 +6,14 @@
         <child>
             <object class="AdwToolbarView">
                 <child type="top">
-                    <object class="AdwHeaderBar"/>
+                    <object class="AdwHeaderBar">
+                        <child type="end">
+                            <object class="GtkButton">
+                                <property name="action-name">win.edit</property>
+                                <property name="icon-name">document-properties</property>
+                            </object>
+                        </child>
+                    </object>
                 </child>
                 <property name="content">
                     <object class="GtkBox">

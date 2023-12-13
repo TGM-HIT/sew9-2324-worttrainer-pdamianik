@@ -2,9 +2,10 @@ use adw::Application;
 use gtk::prelude::*;
 
 mod web_image;
-mod window;
+mod main_window;
+mod word_list;
 
-use window::Window;
+use main_window::Window;
 
 pub fn build_ui(app: &Application) {
     let window = Window::new(app);

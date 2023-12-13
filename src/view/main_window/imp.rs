@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 use adw::gio::SimpleAction;
 use crate::view::web_image::load_image;
 use adw::glib::{self, clone, MainContext};
@@ -5,9 +7,10 @@ use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
 use gtk::{Button, CompositeTemplate, Entry, Image, Spinner};
 use gtk::prelude::*;
+use crate::view::word_list;
 
 #[derive(CompositeTemplate, Default)]
-#[template(resource = "/at/ac/tgm/pdamianik/spelling_trainer/window.ui")]
+#[template(resource = "/at/ac/tgm/pdamianik/spelling_trainer/main.ui")]
 pub struct Window {
     #[template_child]
     pub image: TemplateChild<Image>,
@@ -36,6 +39,7 @@ impl ObjectSubclass for Window {
 
 impl ObjectImpl for Window {
     fn constructed(&self) {
+        let obj = self.obj();
         self.parent_constructed();
 
         let main_context = MainContext::default();
@@ -54,7 +58,19 @@ impl ObjectImpl for Window {
             button.set_label(&format!("Checking {}...", &text));
         }));
 
-        self.obj().add_action(&action_check);
+        obj.add_action(&action_check);
+
+        let action_edit = SimpleAction::new("edit", None);
+
+        {
+            let obj = obj.clone();
+            action_edit.connect_activate(move |_, _| {
+                let edit_window = word_list::Window::new(&obj);
+                edit_window.present();
+            });
+        }
+
+        obj.add_action(&action_edit);
     }
 }
 
