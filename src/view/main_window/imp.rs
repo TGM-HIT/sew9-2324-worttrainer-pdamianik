@@ -41,8 +41,13 @@ impl ObjectSubclass for Window {
 
 impl ObjectImpl for Window {
     fn constructed(&self) {
-        let obj = self.obj();
         self.parent_constructed();
+        let obj = self.obj();
+
+        let action_random = SimpleAction::new("random", None);
+        let action_check = SimpleAction::new("check", None);
+
+        action_check.set_enabled(false);
 
         let trainer = Rc::new(RefCell::new(Trainer::new(&[
             Word {
@@ -55,9 +60,10 @@ impl ObjectImpl for Window {
         web_image.set_visible(false);
         self.image_view.append(&web_image);
 
-        trainer.borrow_mut().observe(clone!(@strong web_image, @strong self.no_word as no_word => move |event| {
+        trainer.borrow_mut().observe(clone!(@strong web_image, @strong self.no_word as no_word, @strong self.check_button as check_button, @strong action_check => move |event| {
             match event {
                 TrainerEvent::Selected(Some(ref word)) => {
+                    action_check.set_enabled(true);
                     web_image.set_visible(true);
                     no_word.set_visible(false);
                     let context = MainContext::default();
@@ -69,22 +75,20 @@ impl ObjectImpl for Window {
                 TrainerEvent::Selected(None) => {
                     web_image.set_visible(false);
                     no_word.set_visible(true);
+                    action_check.set_enabled(false);
                 },
                 _ => {}
             }
         }));
-
-        let action_random = SimpleAction::new("random", None);
 
         action_random.connect_activate(clone!(@strong trainer => move |_, _| {
             trainer.borrow_mut().random();
         }));
         obj.add_action(&action_random);
 
-        let action_check = SimpleAction::new("check", None);
-
         action_check.connect_activate(clone!(@strong trainer, @strong self.guess_entry as entry, @strong self.check_button as button => move |_, _| {
             let text = entry.buffer().text();
+            entry.buffer().set_text("");
             trainer.borrow_mut().guess(&text);
         }));
 
