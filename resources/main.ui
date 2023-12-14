@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+    <menu id="main-menu">
+        <item>
+            <attribute name="label" translatable="yes">Edit word list</attribute>
+            <attribute name="action">win.edit</attribute>
+        </item>
+        <item>
+            <attribute name="label" translatable="yes">Show Stats</attribute>
+        </item>
+    </menu>
     <template class="SpellingTrainerWindow" parent="AdwApplicationWindow">
         <property name="title">Spelling Trainer</property>
         <property name="default-widget">check_button</property>
@@ -8,9 +17,9 @@
                 <child type="top">
                     <object class="AdwHeaderBar">
                         <child type="end">
-                            <object class="GtkButton">
-                                <property name="action-name">win.edit</property>
-                                <property name="icon-name">document-properties</property>
+                            <object class="GtkMenuButton">
+                                <property name="menu-model">main-menu</property>
+                                <property name="icon-name">open-menu-symbolic</property>
                             </object>
                         </child>
                     </object>
