@@ -6,7 +6,6 @@ use adw::glib::{clone, IsA, MainContext};
 use adw::subclass::prelude::*;
 use gtk::prelude::*;
 use crate::model::Trainer;
-use crate::view::web_image::load_image;
 
 glib::wrapper! {
     pub struct Window(ObjectSubclass<imp::Window>)
@@ -21,7 +20,9 @@ impl Window {
             .property("application", app)
             .build();
         window.action_set_enabled("win.check", false);
-        window.sync_trainer();
+        window.trainer().expect("The application does not have a trainer").borrow_mut().random();
+        window.load_image();
+        window.imp().image_view.set_center_widget(Some(&window.imp().web_image));
         window
     }
 
@@ -30,20 +31,17 @@ impl Window {
             .map(|app| app.downcast::<crate::application::Application>().unwrap().trainer())
     }
 
-    fn sync_trainer(&self) {
+    fn load_image(&self) {
         let trainer = self.trainer().expect("The application does not have a trainer");
-        let word = trainer.borrow_mut().random().cloned();
+        let word = trainer.borrow_mut().selected().cloned();
 
         if let Some(word) = word {
             let main_context = MainContext::default();
-            let image = self.imp().image.get();
-            let spinner = self.imp().spinner.get();
+            let image = self.imp().web_image.clone();
             main_context.spawn_local(clone!(@strong self as this => async move {
-                let image_data = load_image(word.url.clone()).await
-                    .expect("Failed loading image data");
-                image.set_from_paintable(image_data.as_ref());
-                spinner.set_visible(false);
-                image.set_visible(true);
+                this.action_set_enabled("win.check", false);
+                image.load(word.url.clone()).await
+                    .expect("Failed loading image");
                 this.action_set_enabled("win.check", true);
             }));
         } else {
@@ -56,20 +54,20 @@ mod imp {
     use adw::glib::{self};
     use adw::subclass::prelude::*;
     use glib::subclass::InitializingObject;
-    use gtk::{Button, CompositeTemplate, Entry, Image, Spinner};
+    use gtk::{Button, CenterBox, CompositeTemplate, Entry};
     use gtk::prelude::*;
+    use crate::view::web_image::WebImage;
 
     #[derive(CompositeTemplate, Default)]
     #[template(resource = "/at/ac/tgm/pdamianik/spelling_trainer/window.ui")]
     pub struct Window {
         #[template_child]
-        pub image: TemplateChild<Image>,
-        #[template_child]
-        pub spinner: TemplateChild<Spinner>,
+        pub image_view: TemplateChild<CenterBox>,
         #[template_child]
         pub guess_entry: TemplateChild<Entry>,
         #[template_child]
         pub check_button: TemplateChild<Button>,
+        pub web_image: WebImage,
     }
 
     #[glib::object_subclass]
@@ -82,12 +80,17 @@ mod imp {
             klass.install_action("win.check", None, |window, _, _| {
                 let entry = window.imp().guess_entry.get();
                 let text = entry.buffer().text();
+                let check_button = window.imp().check_button.get();
                 let trainer = window.trainer().expect("The application does not have a trainer");
                 let correct = trainer.borrow_mut().guess(&text);
                 if correct {
+                    check_button.set_label("Check");
                     entry.buffer().set_text("");
+                    trainer.borrow_mut().random();
+                    window.load_image();
+                } else {
+                    check_button.set_label("Try again");
                 }
-                window.sync_trainer();
             });
 
             klass.bind_template();
