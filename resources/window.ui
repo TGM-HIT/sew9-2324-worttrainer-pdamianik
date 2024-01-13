@@ -2,6 +2,10 @@
 <interface>
     <menu id="main-menu">
         <item>
+            <attribute name="label" translatable="yes">Statistic</attribute>
+            <attribute name="action">app.statistic</attribute>
+        </item>
+        <item>
             <attribute name="label" translatable="yes">About</attribute>
             <attribute name="action">app.about</attribute>
         </item>

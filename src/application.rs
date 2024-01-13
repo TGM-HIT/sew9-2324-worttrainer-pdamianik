@@ -7,6 +7,7 @@ use adw::subclass::prelude::*;
 use lazy_static::lazy_static;
 use url::Url;
 use crate::model::{Trainer, Word};
+use crate::view::statistic::StatisticWindow;
 use crate::view::window::Window;
 
 const APP_ID: &str = "at.ac.tgm.pdamianik.spelling_trainer";
@@ -66,6 +67,13 @@ impl Application {
         dialog.present();
     }
 
+    pub fn show_statistic_dialog(&self) {
+        let window = self.active_window().unwrap();
+        let dialog = StatisticWindow::new(self, &window);
+
+        dialog.present();
+    }
+
     pub fn trainer(&self) -> Rc<RefCell<Trainer>> {
         self.imp().trainer.clone()
     }
@@ -75,6 +83,11 @@ impl Application {
             gio::ActionEntry::builder("about")
                 .activate(move |application: &Application, _, _| {
                     application.show_about_dialog();
+                })
+                .build(),
+            gio::ActionEntry::builder("statistic")
+                .activate(move |application: &Application, _, _| {
+                    application.show_statistic_dialog();
                 })
                 .build(),
         ]);
