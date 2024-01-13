@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+    <menu id="main-menu">
+        <item>
+            <attribute name="label" translatable="yes">About</attribute>
+            <attribute name="action">app.about</attribute>
+        </item>
+    </menu>
     <template class="SpellingTrainerWindow" parent="AdwApplicationWindow">
         <property name="title">Spelling Trainer</property>
         <property name="default-widget">check_button</property>
         <child>
             <object class="AdwToolbarView">
                 <child type="top">
-                    <object class="AdwHeaderBar"/>
+                    <object class="AdwHeaderBar">
+                        <child type="end">
+                            <object class="GtkMenuButton">
+                                <property name="menu-model">main-menu</property>
+                                <property name="icon-name">open-menu-symbolic</property>
+                            </object>
+                        </child>
+                    </object>
                 </child>
                 <property name="content">
                     <object class="GtkBox">
