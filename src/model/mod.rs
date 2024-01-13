@@ -4,6 +4,7 @@ use std::fmt::Debug;
 use rand::prelude::*;
 use rand::seq::index::sample;
 use url::Url;
+use crate::model::statistic::Statistic;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Word {
@@ -15,6 +16,7 @@ pub struct Word {
 pub struct Trainer {
     words: Vec<Word>,
     selected: Option<usize>,
+    statistic: Statistic,
 }
 
 impl Trainer {
@@ -51,9 +53,16 @@ impl Trainer {
     pub fn guess(&mut self, guess: &str) -> bool {
         let correct = self.selected().is_some_and(|word| word.word == guess);
         if correct {
+            self.statistic.increment_correct();
             self.selected = None;
+        } else {
+            self.statistic.increment_incorrect();
         }
         correct
+    }
+
+    pub fn statistic(&self) -> &Statistic {
+        &self.statistic
     }
 }
 
@@ -130,6 +139,8 @@ mod test {
 
         assert!(trainer.guess(&WORDS[0].word), "expect the guess to be correct");
         assert_eq!(trainer.selected(), None, "expect the selection to be cleared");
+        assert_eq!(trainer.statistic().correct(), 1, "expect one correct guess to be counted");
+        assert_eq!(trainer.statistic().incorrect(), 0, "expect no incorrect guess to be counted");
     }
 
     #[test]
@@ -139,5 +150,7 @@ mod test {
 
         assert!(!trainer.guess(&WORDS[1].word), "expect the guess to be incorrect");
         assert_eq!(trainer.selected(), Some(&WORDS[0]), "expect the first word to stay selected");
+        assert_eq!(trainer.statistic().correct(), 0, "expect no correct guess to be counted");
+        assert_eq!(trainer.statistic().incorrect(), 1, "expect one incorrect guess to be counted");
     }
 }
