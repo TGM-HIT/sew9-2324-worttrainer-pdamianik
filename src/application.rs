@@ -53,8 +53,31 @@ impl Application {
         window.present();
     }
 
+    pub fn show_about_dialog(&self) {
+        let window = self.active_window().unwrap();
+        let dialog = adw::AboutWindow::builder()
+            .transient_for(&window)
+            .application_name("Spelling Trainer")
+            .developer_name("Philip Damianik")
+            .version("0.1.0")
+            .developers(vec!["Philip Damianik"])
+            .build();
+
+        dialog.present();
+    }
+
     pub fn trainer(&self) -> Rc<RefCell<Trainer>> {
         self.imp().trainer.clone()
+    }
+
+    fn setup_gactions(&self) {
+        self.add_action_entries([
+            gio::ActionEntry::builder("about")
+                .activate(move |application: &Application, _, _| {
+                    application.show_about_dialog();
+                })
+                .build(),
+        ]);
     }
 }
 
@@ -83,7 +106,11 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for Application {}
+    impl ObjectImpl for Application {
+        fn constructed(&self) {
+            self.obj().setup_gactions();
+        }
+    }
 
     impl ApplicationImpl for Application {
         fn activate(&self) {
