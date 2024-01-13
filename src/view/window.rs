@@ -1,6 +1,12 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 use glib::Object;
 use adw::{gio, glib};
-use adw::glib::IsA;
+use adw::glib::{clone, IsA, MainContext};
+use adw::subclass::prelude::*;
+use gtk::prelude::*;
+use crate::model::Trainer;
+use crate::view::web_image::load_image;
 
 glib::wrapper! {
     pub struct Window(ObjectSubclass<imp::Window>)
@@ -11,14 +17,43 @@ glib::wrapper! {
 
 impl Window {
     pub fn new(app: &impl IsA<gtk::Application>) -> Self {
-        Object::builder().property("application", app).build()
+        let window = Object::builder::<Window>()
+            .property("application", app)
+            .build();
+        window.action_set_enabled("win.check", false);
+        window.sync_trainer();
+        window
+    }
+
+    pub fn trainer(&self) -> Option<Rc<RefCell<Trainer>>> {
+        self.application()
+            .map(|app| app.downcast::<crate::application::Application>().unwrap().trainer())
+    }
+
+    fn sync_trainer(&self) {
+        let trainer = self.trainer().expect("The application does not have a trainer");
+        let word = trainer.borrow_mut().random().cloned();
+
+        if let Some(word) = word {
+            let main_context = MainContext::default();
+            let image = self.imp().image.get();
+            let spinner = self.imp().spinner.get();
+            main_context.spawn_local(clone!(@strong self as this => async move {
+                let image_data = load_image(word.url.clone()).await
+                    .expect("Failed loading image data");
+                image.set_from_paintable(image_data.as_ref());
+                spinner.set_visible(false);
+                image.set_visible(true);
+                this.action_set_enabled("win.check", true);
+            }));
+        } else {
+            self.action_set_enabled("win.check", false);
+        }
     }
 }
 
 mod imp {
-    use adw::gio::SimpleAction;
-    use crate::view::web_image::load_image;
-    use adw::glib::{self, clone, MainContext};
+    use adw::glib::{self};
     use adw::subclass::prelude::*;
     use glib::subclass::InitializingObject;
     use gtk::{Button, CompositeTemplate, Entry, Image, Spinner};
@@ -44,6 +79,17 @@ mod imp {
         type ParentType = adw::ApplicationWindow;
 
         fn class_init(klass: &mut Self::Class) {
+            klass.install_action("win.check", None, |window, _, _| {
+                let entry = window.imp().guess_entry.get();
+                let text = entry.buffer().text();
+                let trainer = window.trainer().expect("The application does not have a trainer");
+                let correct = trainer.borrow_mut().guess(&text);
+                if correct {
+                    entry.buffer().set_text("");
+                }
+                window.sync_trainer();
+            });
+
             klass.bind_template();
         }
 
@@ -53,27 +99,6 @@ mod imp {
     }
 
     impl ObjectImpl for Window {
-        fn constructed(&self) {
-            self.parent_constructed();
-
-            let main_context = MainContext::default();
-            main_context.spawn_local(clone!(@strong self.image as image, @strong self.spinner as spinner => async move {
-                let image_data = load_image("https://source.unsplash.com/random").await
-                    .expect("Failed loading image data");
-                image.set_from_paintable(image_data.as_ref());
-                spinner.set_visible(false);
-                image.set_visible(true);
-            }));
-
-            let action_check = SimpleAction::new("check", None);
-
-            action_check.connect_activate(clone!(@strong self.guess_entry as entry, @strong self.check_button as button => move |_, _| {
-                let text = entry.buffer().text();
-                button.set_label(&format!("Checking {}...", &text));
-            }));
-
-            self.obj().add_action(&action_check);
-        }
     }
 
     impl WidgetImpl for Window {}
