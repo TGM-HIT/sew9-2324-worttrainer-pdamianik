@@ -2,5 +2,6 @@
 <gresources>
     <gresource prefix="/at/ac/tgm/pdamianik/spelling_trainer/">
         <file compressed="true" preprocess="xml-stripblanks">window.ui</file>
+        <file compressed="true" preprocess="xml-stripblanks">statistic.ui</file>
     </gresource>
 </gresources>

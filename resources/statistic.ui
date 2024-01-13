@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <template class="StatisticWindow" parent="AdwWindow">
+        <property name="title">Statistic</property>
+        <property name="modal">true</property>
+        <property name="default-width">300</property>
+        <property name="default-height">250</property>
+        <child type="content">
+            <object class="AdwToolbarView">
+                <child type="top">
+                    <object class="AdwHeaderBar"/>
+                </child>
+                <property name="content">
+                    <object class="GtkLabel" id="statistic">
+                        <property name="label" translatable="yes">Statistic</property>
+                    </object>
+                </property>
+            </object>
+        </child>
+    </template>
+</interface>
