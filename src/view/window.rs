@@ -20,7 +20,6 @@ impl Window {
             .property("application", app)
             .build();
         window.action_set_enabled("win.check", false);
-        window.trainer().expect("The application does not have a trainer").borrow_mut().random();
         window.load_image();
         window.imp().image_view.set_center_widget(Some(&window.imp().web_image));
         window

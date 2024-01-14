@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 rand = "0.8.5"
-url = { version = "2.4.1"}
+url = { version = "2.4.1", features = ["serde"] }
 tokio = { version = "1.33.0", features = ["rt-multi-thread", "macros"] }
 futures = "0.3.28"
 gtk = { version = "0.7.3", package = "gtk4", features = ["v4_12", "gnome_45"] }
@@ -15,6 +15,9 @@ adw = { version = "0.5.3", package = "libadwaita", features = ["v1_4"] }
 reqwest = { version = "0.11.22", features = ["stream"] }
 thiserror = "1.0.50"
 lazy_static = "1.4.0"
+serde = { version = "1.0.195", features = ["derive"] }
+ciborium = "0.2.1"
+directories = "5.0.1"
 
 [build-dependencies]
 glib-build-tools = "0.18.0"

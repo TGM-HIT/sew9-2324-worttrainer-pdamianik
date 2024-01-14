@@ -4,15 +4,16 @@ use std::fmt::Debug;
 use rand::prelude::*;
 use rand::seq::index::sample;
 use url::Url;
+use serde::{Deserialize, Serialize};
 use crate::model::statistic::Statistic;
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct Word {
     pub word: String,
     pub url: Url,
 }
 
-#[derive(Default, Clone, Debug, Eq, PartialEq)]
+#[derive(Default, Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct Trainer {
     words: Vec<Word>,
     selected: Option<usize>,
