@@ -1,6 +1,7 @@
 use std::fmt::Debug;
+use serde::{Deserialize, Serialize};
 
-#[derive(Default, Clone, Debug, Eq, PartialEq)]
+#[derive(Default, Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct Statistic {
     correct: usize,
     incorrect: usize,

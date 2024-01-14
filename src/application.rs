@@ -1,9 +1,11 @@
 use std::cell::RefCell;
+use std::path::PathBuf;
 use std::rc::Rc;
 use adw::{gio, glib};
 use adw::glib::Object;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
+use directories::ProjectDirs;
 use lazy_static::lazy_static;
 use url::Url;
 use crate::model::{Trainer, Word};
@@ -12,6 +14,8 @@ use crate::view::window::Window;
 
 const APP_ID: &str = "at.ac.tgm.pdamianik.spelling_trainer";
 lazy_static!{
+    static ref SAVE_FOLDER: PathBuf = ProjectDirs::from("at.ac", "tgm", "spelling_trainer").expect("Failed to get project dirs").data_dir().to_owned();
+    static ref SAVE_FILE: PathBuf = SAVE_FOLDER.join("save.cbor");
     static ref WORDS: [Word; 2] = [
         Word {
             word: "apple".to_owned(),
@@ -99,6 +103,7 @@ mod imp {
     use std::rc::Rc;
     use adw::glib;
     use adw::subclass::prelude::*;
+    use super::{SAVE_FILE, SAVE_FOLDER};
     use crate::model::Trainer;
 
     pub struct Application {
@@ -112,9 +117,15 @@ mod imp {
         type ParentType = adw::Application;
 
         fn new() -> Self {
-            let words = &super::WORDS[..];
+            let trainer = if SAVE_FILE.exists() {
+                ciborium::from_reader(std::fs::File::open(SAVE_FILE.as_path()).expect("Failed to open save file")).expect("Failed to deserialize save file")
+            } else {
+                let mut trainer = Trainer::new(&super::WORDS[..]);
+                trainer.random();
+                trainer
+            };
             Self {
-                trainer: Rc::new(RefCell::new(Trainer::new(words))),
+                trainer: Rc::new(RefCell::new(trainer)),
             }
         }
     }
@@ -130,6 +141,16 @@ mod imp {
             self.parent_activate();
 
             self.obj().present_window();
+        }
+
+        fn shutdown(&self) {
+            self.parent_shutdown();
+
+            if !SAVE_FOLDER.exists() {
+                std::fs::create_dir_all(SAVE_FOLDER.as_path()).expect("Failed to create save folder");
+            }
+
+            ciborium::into_writer(&*self.trainer.borrow(), std::fs::File::create(SAVE_FILE.as_path()).expect("Failed to create save file")).expect("Failed to serialize save file");
         }
     }
     impl GtkApplicationImpl for Application {}
