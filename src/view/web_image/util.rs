@@ -10,6 +10,7 @@ use lazy_static::lazy_static;
 use reqwest::{Client, IntoUrl};
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use thiserror::Error;
+use tokio::spawn;
 
 lazy_static!(
     static ref CACHE_FOLDER: PathBuf = ProjectDirs::from("at.ac", "tgm", "spelling_trainer").expect("Failed to get project dirs").cache_dir().to_owned();
@@ -34,8 +35,8 @@ pub enum Error {
     ReqwestMiddlewareError(#[from] reqwest_middleware::Error),
 }
 
-pub async fn load_image(url: impl IntoUrl) -> Result<Option<Texture>, Error> {
-    let mut image_data = CLIENT.get(url).send().await?.bytes_stream();
+pub async fn load_image(url: impl IntoUrl + Send + 'static) -> Result<Option<Texture>, Error> {
+    let mut image_data = spawn(async {CLIENT.get(url).send().await}).await.unwrap()?.bytes_stream();
     let image = PixbufLoader::new();
 
     while let Some(chunk) = image_data.next().await {
