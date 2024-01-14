@@ -1,0 +1,30 @@
+name: Rust
+
+on:
+  release:
+    types: [ published ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: install gtk dependencies
+      run: |
+        sudo apt update
+        sudo apt install libgtk-4-dev build-essential
+    - name: Run tests
+      run: cargo test --verbose
+    - name: Build
+      run: cargo build --verbose
+    - name: Publish GitHub Release Artifacts
+      uses: SierraSoftworks/gh-releases@v1.0.7
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        overwrite: 'true'
+        files: |
+          target/release/spelling_trainer | spelling_trainer
