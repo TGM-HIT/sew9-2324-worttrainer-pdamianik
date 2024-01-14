@@ -7,7 +7,7 @@ mod model;
 mod view;
 mod application;
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread", worker_threads = 1)]
 async fn main() -> ExitCode {
     gio::resources_register_include!("spelling_trainer.gresource")
         .expect("failed to register resources.");
