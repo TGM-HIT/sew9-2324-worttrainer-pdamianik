@@ -23,7 +23,7 @@ impl WebImage {
         Self::default()
     }
 
-    pub async fn load(&self, url: impl IntoUrl + 'static) -> Result<(), util::Error> {
+    pub async fn load(&self, url: impl IntoUrl + Send + 'static) -> Result<(), util::Error> {
         let image = self.imp().image.clone();
         let spinner = self.imp().spinner.clone();
         image.borrow().set_visible(false);
