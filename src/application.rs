@@ -16,7 +16,7 @@ const APP_ID: &str = "at.ac.tgm.pdamianik.spelling_trainer";
 lazy_static!{
     static ref SAVE_FOLDER: PathBuf = ProjectDirs::from("at.ac", "tgm", "spelling_trainer").expect("Failed to get project dirs").data_dir().to_owned();
     static ref SAVE_FILE: PathBuf = SAVE_FOLDER.join("save.cbor");
-    static ref WORDS: [Word; 2] = [
+    static ref WORDS: [Word; 4] = [
         Word {
             word: "apple".to_owned(),
             url: Url::parse("https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwikiclipart.com%2Fwp-content%2Fuploads%2F2016%2F09%2Fclip-art-apple-free-clipart.png&f=1&nofb=1&ipt=8d2d625dc550c18588574defee43dedc1906b3ff464fb1afab521c3426ed6f0e&ipo=images").expect("Failed to parse builtin image url"),
@@ -24,6 +24,14 @@ lazy_static!{
         Word {
             word: "raspberry".to_owned(),
             url: Url::parse("https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fclipartmag.com%2Fimages%2Fraspberry-clipart-27.png&f=1&nofb=1&ipt=e7b96c092eb38787f696e47f6c80cb23b5e7c299a538f01a099597fb06ba0f21&ipo=images").expect("Failed to parse builtin image url"),
+        },
+        Word {
+            word: "dog".to_owned(),
+            url: Url::parse("https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fbarkpost-assets.s3.amazonaws.com%2Fwp-content%2Fuploads%2F2013%2F11%2FplainDoge.jpg&f=1&nofb=1&ipt=bfd189bb92e0e5cf09275bb2a6beb88c3d820f86081781759e5c8c0bd5854e4f&ipo=images").expect("Failed to parse builtin image url"),
+        },
+        Word {
+            word: "cat".to_owned(),
+            url: Url::parse("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fthecaninebuddy.com%2Fwp-content%2Fuploads%2F2021%2F08%2Fcrying-cat-meme.jpg&f=1&nofb=1&ipt=e2f2214f7587939060fef5208b166c8e19269d2a4b92b6185f8f83119bff266b&ipo=images").expect("Failed to parse builtin image url"),
         }
     ];
 }
