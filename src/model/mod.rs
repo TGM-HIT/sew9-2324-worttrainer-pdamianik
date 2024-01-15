@@ -11,6 +11,7 @@ use crate::model::statistic::Statistic;
 pub struct Word {
     pub word: String,
     pub url: Url,
+    pub credits: String,
 }
 
 #[derive(Default, Clone, Debug, Serialize, Deserialize)]

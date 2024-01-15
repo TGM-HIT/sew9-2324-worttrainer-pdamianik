@@ -20,18 +20,22 @@ lazy_static!{
         Word {
             word: "apple".to_owned(),
             url: Url::parse("https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwikiclipart.com%2Fwp-content%2Fuploads%2F2016%2F09%2Fclip-art-apple-free-clipart.png&f=1&nofb=1&ipt=8d2d625dc550c18588574defee43dedc1906b3ff464fb1afab521c3426ed6f0e&ipo=images").expect("Failed to parse builtin image url"),
+            credits: "apple https://wikiclipart.com/apple-clipart_480/".to_owned(),
         },
         Word {
             word: "raspberry".to_owned(),
             url: Url::parse("https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fclipartmag.com%2Fimages%2Fraspberry-clipart-27.png&f=1&nofb=1&ipt=e7b96c092eb38787f696e47f6c80cb23b5e7c299a538f01a099597fb06ba0f21&ipo=images").expect("Failed to parse builtin image url"),
+            credits: "raspberry https://clipartmag.com/download-clipart-image#raspberry-clipart-27.png".to_owned(),
         },
         Word {
             word: "dog".to_owned(),
-            url: Url::parse("https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fbarkpost-assets.s3.amazonaws.com%2Fwp-content%2Fuploads%2F2013%2F11%2FplainDoge.jpg&f=1&nofb=1&ipt=bfd189bb92e0e5cf09275bb2a6beb88c3d820f86081781759e5c8c0bd5854e4f&ipo=images").expect("Failed to parse builtin image url"),
+            url: Url::parse("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpaperboat.com%2Fwp-content%2Fuploads%2F2021%2F05%2F13%2F77274%2Fdoge-meme-11.jpg&f=1&nofb=1&ipt=2c90776ba562173dcbda96b9fa10110e2ec577700a7f8ec511dc9a2825b644b9&ipo=images").expect("Failed to parse builtin image url"),
+            credits: "dog https://wallpaperboat.com/doge-meme-wallpapers".to_owned(),
         },
         Word {
             word: "cat".to_owned(),
             url: Url::parse("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fthecaninebuddy.com%2Fwp-content%2Fuploads%2F2021%2F08%2Fcrying-cat-meme.jpg&f=1&nofb=1&ipt=e2f2214f7587939060fef5208b166c8e19269d2a4b92b6185f8f83119bff266b&ipo=images").expect("Failed to parse builtin image url"),
+            credits: "cat https://thecaninebuddy.com/crying-cat-meme-know-when-you-should-use-it/".to_owned(),
         }
     ];
 }
@@ -75,6 +79,8 @@ impl Application {
             .version("0.1.0")
             .developers(vec!["Philip Damianik"])
             .build();
+
+        dialog.add_credit_section(Some("Images"), &WORDS.iter().map(|word| word.credits.as_str()).collect::<Vec<_>>());
 
         dialog.present();
     }
