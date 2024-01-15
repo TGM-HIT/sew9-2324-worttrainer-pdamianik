@@ -11,6 +11,7 @@ use crate::model::statistic::Statistic;
 pub struct Word {
     pub word: String,
     pub url: Url,
+    pub credits: String,
 }
 
 #[derive(Default, Clone, Debug, Serialize, Deserialize)]
@@ -88,10 +89,12 @@ mod test {
             Word {
                 word: "Apple".to_owned(),
                 url: Url::from_str("https://apple.com/").expect("valid url"),
+                credits: "Apple".to_owned(),
             },
             Word {
                 word: "Raspberry".to_owned(),
                 url: Url::from_str("https://raspberry.org/").expect("valid url"),
+                credits: "Raspberry".to_owned(),
             }
         ];
     }
