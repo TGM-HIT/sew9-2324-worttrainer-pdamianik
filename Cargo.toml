@@ -10,8 +10,8 @@ rand = "0.8.5"
 url = { version = "2.4.1", features = ["serde"] }
 tokio = { version = "1.33.0", features = ["rt-multi-thread", "macros"] }
 futures = "0.3.28"
-gtk = { version = "0.7.3", package = "gtk4", features = ["v4_12", "gnome_45"] }
-adw = { version = "0.5.3", package = "libadwaita", features = ["v1_4"] }
+gtk = { version = "0.7.3", package = "gtk4", features = ["v4_8", "gnome_45"] }
+adw = { version = "0.5.3", package = "libadwaita", features = ["v1_3"] }
 reqwest = { version = "0.11.22", features = ["stream"] }
 reqwest-middleware = "0.2.4"
 http-cache-reqwest = "0.12.0"
