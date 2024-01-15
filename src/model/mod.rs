@@ -13,11 +13,21 @@ pub struct Word {
     pub url: Url,
 }
 
-#[derive(Default, Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Clone, Debug, Serialize, Deserialize)]
 pub struct Trainer {
     words: Vec<Word>,
     selected: Option<usize>,
     statistic: Statistic,
+    #[serde(skip)]
+    generator: ThreadRng,
+}
+
+impl PartialEq for Trainer {
+    fn eq(&self, other: &Self) -> bool {
+        self.words == other.words &&
+            self.selected == other.selected &&
+            self.statistic == other.statistic
+    }
 }
 
 impl Trainer {
@@ -44,7 +54,7 @@ impl Trainer {
         if self.words.is_empty() {
             self.selected = None;
         } else {
-            let idx = sample(&mut thread_rng(), self.words.len(), 1).index(0);
+            let idx = sample(&mut self.generator, self.words.len(), 1).index(0);
             self.select(idx);
         }
 
@@ -73,7 +83,7 @@ mod test {
     use lazy_static::lazy_static;
     use super::*;
 
-    lazy_static!{
+    lazy_static! {
         static ref WORDS: [Word; 2] = [
             Word {
                 word: "Apple".to_owned(),
