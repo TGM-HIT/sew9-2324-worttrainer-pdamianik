@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::path::PathBuf;
 use std::rc::Rc;
 use adw::{gio, glib};
-use adw::glib::Object;
+use adw::glib::{closure_local, Object};
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use directories::ProjectDirs;
@@ -108,7 +108,19 @@ impl Application {
                     application.show_statistic_dialog();
                 })
                 .build(),
+            gio::ActionEntry::builder("reset")
+                .activate(move |application: &Application, _, _| {
+                    application.imp().trainer.borrow_mut().reset_statistic();
+                    application.emit_by_name::<()>("update-statistic", &[]);
+                })
+                .build(),
         ]);
+
+        self.connect_closure("update-statistic", false, closure_local!(move |application: Application| {
+            application.windows().iter()
+                .find(|window| window.is::<StatisticWindow>())
+                .map(|window| window.clone().downcast::<StatisticWindow>().unwrap().update_statistic());
+        }));
     }
 }
 
@@ -116,7 +128,9 @@ mod imp {
     use std::cell::RefCell;
     use std::rc::Rc;
     use adw::glib;
+    use adw::glib::subclass::Signal;
     use adw::subclass::prelude::*;
+    use once_cell::sync::Lazy;
     use super::{SAVE_FILE, SAVE_FOLDER};
     use crate::model::Trainer;
 
@@ -147,6 +161,14 @@ mod imp {
     impl ObjectImpl for Application {
         fn constructed(&self) {
             self.obj().setup_gactions();
+        }
+
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+                vec![Signal::builder("update-statistic")
+                    .build()]
+            });
+            SIGNALS.as_ref()
         }
     }
 

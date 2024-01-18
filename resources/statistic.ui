@@ -10,6 +10,24 @@
                 <child type="top">
                     <object class="AdwHeaderBar"/>
                 </child>
+                <child type="bottom">
+                    <object class="GtkBox">
+                        <property name="orientation">horizontal</property>
+                        <style>
+                            <class name="toolbar"/>
+                        </style>
+                        <child>
+                            <object class="GtkButton">
+                                <property name="label" translatable="yes">Reset</property>
+                                <property name="action-name">app.reset</property>
+                                <property name="hexpand">true</property>
+                                <style>
+                                    <class name="destructive-action"/>
+                                </style>
+                            </object>
+                        </child>
+                    </object>
+                </child>
                 <property name="content">
                     <object class="GtkLabel" id="statistic">
                         <property name="label" translatable="yes">Statistic</property>

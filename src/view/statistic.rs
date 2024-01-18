@@ -20,7 +20,7 @@ impl StatisticWindow {
         window
     }
 
-    fn update_statistic(&self) {
+    pub fn update_statistic(&self) {
         let trainer = self.application()
             .expect("No application")
             .downcast::<crate::application::Application>()
@@ -34,6 +34,7 @@ impl StatisticWindow {
         let percent = correct as f64 / total as f64 * 100.0;
 
         self.imp().statistic.set_text(&format!("{correct} correct, {incorrect} incorrect out of {total} ({percent:.2}%)"));
+        self.action_set_enabled("app.reset", total != 0);
     }
 }
 

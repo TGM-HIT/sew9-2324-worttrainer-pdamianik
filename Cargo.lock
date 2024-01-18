@@ -1650,6 +1650,7 @@ dependencies = [
  "http-cache-reqwest",
  "lazy_static",
  "libadwaita",
+ "once_cell",
  "rand",
  "reqwest",
  "reqwest-middleware",
