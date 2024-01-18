@@ -82,6 +82,7 @@ mod imp {
                 let check_button = window.imp().check_button.get();
                 let trainer = window.trainer().expect("The application does not have a trainer");
                 let correct = trainer.borrow_mut().guess(&text);
+                window.application().unwrap().emit_by_name::<()>("update-statistic", &[]);
                 if correct {
                     check_button.set_label("Check");
                     entry.buffer().set_text("");

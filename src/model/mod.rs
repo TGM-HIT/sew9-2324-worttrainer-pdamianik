@@ -76,6 +76,10 @@ impl Trainer {
     pub fn statistic(&self) -> &Statistic {
         &self.statistic
     }
+
+    pub fn reset_statistic(&mut self) {
+        self.statistic = Statistic::default();
+    }
 }
 
 #[cfg(test)]
