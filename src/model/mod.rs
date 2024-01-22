@@ -107,7 +107,7 @@ mod test {
     fn default_selected() {
         let trainer = Trainer::default();
 
-        assert_eq!(trainer.selected, None, "expect an empty selection");
+        assert_eq!(trainer.selected(), None, "expect an empty selection");
     }
 
     #[test]
